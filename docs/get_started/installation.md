@@ -4,9 +4,11 @@
 
 Supported Python versions:
 
-- 3.9
 - 3.10
 - 3.11
+- 3.12
+- 3.13
+- 3.14
 
 ## Using `pip`
 
@@ -14,9 +16,32 @@ Supported Python versions:
 
     Consider installing the LLM Guard python packages on a virtual environment like `venv` or `conda`.
 
+### Base installation (security scanners)
+
+The base installation includes all scanners that do **not** require Presidio,
+such as prompt injection detection, toxicity detection, token limits, regex
+matching, ban topics / code / substrings, secrets detection, and more.
+
 ```bash
 pip install llm-guard
 ```
+
+### PII / Anonymization support (optional)
+
+If you need the **Anonymize** (input) or **Sensitive** (output) scanners that
+rely on Presidio for PII detection and anonymization, install the `pii` extra:
+
+```bash
+pip install "llm-guard[pii]"
+```
+
+!!! info "Scanner dependency groups"
+
+    | Dependency group | Scanners | Extra |
+    |---|---|---|
+    | **Base** | BanCode, BanCompetitors, BanSubstrings, BanTopics, Bias, Code, Deanonymize, EmotionDetection, FactualConsistency, Gibberish, InvisibleText, JSON, Language, LanguageSame, MaliciousURLs, NoRefusal, PromptInjection, ReadingTime, Regex, Relevance, Secrets, Sentiment, TokenLimit, Toxicity, URLReachability | *(none)* |
+    | **PII / Presidio** | Anonymize, Sensitive | `pii` |
+    | **ONNX Runtime** | Any scanner with `use_onnx=True` | `onnxruntime` |
 
 If you have issue installing the package due to missing `torch`, you can try the following commands:
 
