@@ -18,7 +18,6 @@ from .no_refusal import NoRefusal, NoRefusalLight
 from .reading_time import ReadingTime
 from .regex import Regex
 from .relevance import Relevance
-from .sensitive import Sensitive
 from .sentiment import Sentiment
 from .toxicity import Toxicity
 from .url_reachabitlity import URLReachability
@@ -93,6 +92,8 @@ def get_scanner_by_name(scanner_name: str, scanner_config: Optional[Dict] = None
         return Relevance(**scanner_config)
 
     if scanner_name == "Sensitive":
+        from .sensitive import Sensitive
+
         return Sensitive(**scanner_config)
 
     if scanner_name == "Sentiment":

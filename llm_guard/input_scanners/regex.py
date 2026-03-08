@@ -2,8 +2,7 @@ import re
 from enum import Enum
 from typing import List, Pattern
 
-from presidio_anonymizer.core.text_replace_builder import TextReplaceBuilder
-
+from llm_guard.text_replace import TextReplaceBuilder
 from llm_guard.util import get_logger
 
 from .base import Scanner

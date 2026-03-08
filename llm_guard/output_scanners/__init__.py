@@ -1,5 +1,7 @@
 """LLM output scanners init"""
 
+import importlib as _importlib
+
 from .ban_code import BanCode
 from .ban_competitors import BanCompetitors
 from .ban_substrings import BanSubstrings
@@ -18,11 +20,25 @@ from .no_refusal import NoRefusal, NoRefusalLight
 from .reading_time import ReadingTime
 from .regex import Regex
 from .relevance import Relevance
-from .sensitive import Sensitive
 from .sentiment import Sentiment
 from .toxicity import Toxicity
 from .url_reachabitlity import URLReachability
 from .util import get_scanner_by_name
+
+# Presidio-backed scanners are loaded lazily so that importing this package
+# does not require the ``presidio-analyzer`` / ``presidio-anonymizer``
+# packages to be installed.
+_LAZY_IMPORTS: dict[str, str] = {
+    "Sensitive": ".sensitive",
+}
+
+
+def __getattr__(name: str):
+    if name in _LAZY_IMPORTS:
+        module = _importlib.import_module(_LAZY_IMPORTS[name], __name__)
+        return getattr(module, name)
+    raise AttributeError(f"module {__name__!r} has no attribute {name!r}")
+
 
 __all__ = [
     "BanCode",
