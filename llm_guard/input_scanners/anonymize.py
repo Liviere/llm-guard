@@ -4,25 +4,31 @@ import os
 import re
 from typing import Final
 
-from presidio_analyzer import RecognizerResult
-from presidio_anonymizer.core.text_replace_builder import TextReplaceBuilder
-
-from llm_guard.input_scanners.anonymize_helpers.ner_mapping import NERConfig
-
 from ..exception import LLMGuardValidationError
 from ..util import calculate_risk_score, get_logger
 from ..vault import Vault
-from .anonymize_helpers import (
-    DEBERTA_AI4PRIVACY_v2_CONF,
-    get_analyzer,
-    get_fake_value,
-    get_regex_patterns,
-    get_transformers_recognizer,
-)
-from .anonymize_helpers.regex_patterns import DefaultRegexPatterns, RegexPatternsReuse
 from .base import Scanner
 
 LOGGER = get_logger()
+
+_PRESIDIO_AVAILABLE = False
+try:
+    from presidio_analyzer import RecognizerResult
+    from presidio_anonymizer.core.text_replace_builder import TextReplaceBuilder
+
+    from .anonymize_helpers import (
+        DEBERTA_AI4PRIVACY_v2_CONF,
+        get_analyzer,
+        get_fake_value,
+        get_regex_patterns,
+        get_transformers_recognizer,
+    )
+    from .anonymize_helpers.ner_mapping import NERConfig
+    from .anonymize_helpers.regex_patterns import DefaultRegexPatterns, RegexPatternsReuse
+
+    _PRESIDIO_AVAILABLE = True
+except ImportError:
+    pass
 
 DEFAULT_ENTITY_TYPES: Final[list[str]] = [
     "CREDIT_CARD",
@@ -82,6 +88,12 @@ class Anonymize(Scanner):
             use_onnx: Whether to use ONNX runtime for inference. Default is False.
             language: Language of the anonymize detect. Default is "en".
         """
+
+        if not _PRESIDIO_AVAILABLE:
+            raise ImportError(
+                "Presidio packages are required for the Anonymize scanner. "
+                "Install them with: pip install llm-guard[pii]"
+            )
 
         if language not in ALL_SUPPORTED_LANGUAGES:
             raise LLMGuardValidationError(

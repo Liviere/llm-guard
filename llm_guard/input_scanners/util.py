@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-from .anonymize import Anonymize
 from .ban_code import BanCode
 from .ban_competitors import BanCompetitors
 from .ban_substrings import BanSubstrings
@@ -33,6 +32,8 @@ def get_scanner_by_name(scanner_name: str, scanner_config: dict | None = None) -
         scanner_config = {}
 
     if scanner_name == "Anonymize":
+        from .anonymize import Anonymize
+
         return Anonymize(**scanner_config)
 
     if scanner_name == "BanCode":

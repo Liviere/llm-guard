@@ -1,29 +1,37 @@
 from __future__ import annotations
 
-from presidio_anonymizer import AnonymizerEngine
-
 from llm_guard.exception import LLMGuardValidationError
-from llm_guard.input_scanners.anonymize import (
-    ALL_SUPPORTED_LANGUAGES,
-    DEFAULT_ENTITY_TYPES,
-    Anonymize,
-)
-from llm_guard.input_scanners.anonymize_helpers import (
-    DEBERTA_AI4PRIVACY_v2_CONF,
-    get_analyzer,
-    get_regex_patterns,
-    get_transformers_recognizer,
-)
-from llm_guard.input_scanners.anonymize_helpers.ner_mapping import NERConfig
 from llm_guard.util import calculate_risk_score, get_logger
 
-from ..input_scanners.anonymize_helpers.regex_patterns import (
-    DefaultRegexPatterns,
-    RegexPatternsReuse,
-)
 from .base import Scanner
 
 LOGGER = get_logger()
+
+_PRESIDIO_AVAILABLE = False
+try:
+    from presidio_anonymizer import AnonymizerEngine
+
+    from llm_guard.input_scanners.anonymize import (
+        ALL_SUPPORTED_LANGUAGES,
+        DEFAULT_ENTITY_TYPES,
+        Anonymize,
+    )
+    from llm_guard.input_scanners.anonymize_helpers import (
+        DEBERTA_AI4PRIVACY_v2_CONF,
+        get_analyzer,
+        get_regex_patterns,
+        get_transformers_recognizer,
+    )
+    from llm_guard.input_scanners.anonymize_helpers.ner_mapping import NERConfig
+
+    from ..input_scanners.anonymize_helpers.regex_patterns import (
+        DefaultRegexPatterns,
+        RegexPatternsReuse,
+    )
+
+    _PRESIDIO_AVAILABLE = True
+except ImportError:
+    pass
 
 
 class Sensitive(Scanner):
@@ -57,6 +65,12 @@ class Sensitive(Scanner):
            threshold (float): Acceptance threshold. Default is 0.
            use_onnx (bool): Use ONNX model for inference. Default is False.
         """
+        if not _PRESIDIO_AVAILABLE:
+            raise ImportError(
+                "Presidio packages are required for the Sensitive scanner. "
+                "Install them with: pip install llm-guard[pii]"
+            )
+
         if language not in ALL_SUPPORTED_LANGUAGES:
             raise LLMGuardValidationError(
                 f"Language must be in the list of allowed: {ALL_SUPPORTED_LANGUAGES}"

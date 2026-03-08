@@ -3,9 +3,8 @@ from __future__ import annotations
 import copy
 from typing import Any, Sequence
 
-from presidio_anonymizer.core.text_replace_builder import TextReplaceBuilder
-
 from llm_guard.model import Model
+from llm_guard.text_replace import TextReplaceBuilder
 from llm_guard.transformers_helpers import get_tokenizer_and_model_for_ner
 from llm_guard.util import get_logger, lazy_load_dep, split_text_to_word_chunks
 
