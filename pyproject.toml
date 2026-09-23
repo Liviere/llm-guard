@@ -23,12 +23,12 @@ requires-python = ">=3.10,<3.15"
 dependencies = [
   "bc-detect-secrets==1.5.43",
   "fuzzysearch>=0.7,<0.9",
-  "json-repair==0.44.1",
+  "json-repair>=0.60.1,<1",
   "nltk>=3.9.1,<4",
-  "regex==2024.11.6",
+  "regex>=2025.10.22",
   "tiktoken>=0.9,<1.0",
   "torch>=2.4.0",
-  "transformers>=4.53.0,<5",
+  "transformers>=5.10.0,<6",
   "structlog>=24"
 ]
 
